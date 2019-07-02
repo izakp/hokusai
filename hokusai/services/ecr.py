@@ -8,6 +8,8 @@ from hokusai.lib.config import config
 from hokusai.lib.common import get_region_name
 from hokusai.lib.exceptions import HokusaiError
 
+import pprint
+
 SHA1_REGEX = re.compile(r"\b[0-9a-f]{40}\b")
 
 class ECR(object):
@@ -79,6 +81,16 @@ class ECR(object):
                                     nextToken=res['nextToken'])
       images += res['imageDetails']
     return images
+
+  def find_image_manifest(self, context):
+    for image in self.get_images():
+      if 'imageTags' not in image.keys():
+        continue
+      if context in image['imageTags']:
+        return image
+
+  def image_manifests_by_timestamp(self, context):
+    pass
 
   def tag_exists(self, tag):
     for image in self.get_images():
